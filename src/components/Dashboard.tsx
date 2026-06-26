@@ -123,7 +123,7 @@ export default function Dashboard({
           </span>
           <p className="text-[11px] text-white/50 mt-1 leading-relaxed max-w-2xl">
             {dashboardView === 'investor' 
-              ? '关注休眠资产势能、社区多签托管、市值修复模拟与销毁通缩进度。适合治理方与代币持有者。' 
+              ? '关注休眠资产势能、奖励确认状态、市值修复模拟与销毁通缩进度。适合治理方与代币持有者。' 
               : '专注 KAIR-VM 沙盒编译器调试、气阻 (Gas) 执行效率微调、智能对齐校验与多签代理。适合链上 Builder 与安全审计师。'}
           </p>
         </div>
@@ -470,7 +470,7 @@ export default function Dashboard({
                 </div>
 
                 <p className="text-xs text-white/50 leading-relaxed mt-4">
-                  治理方与开发者可通过微调 KAIR-VM 编译器执行轮数来降低多签托管、通缩销毁和重组注入的单笔 Gas 费：
+                  治理方与开发者可通过微调 KAIR-VM 编译器执行轮数来降低奖励确认、通缩销毁和重组注入的单笔 Gas 费：
                 </p>
 
                 {/* Slider Control */}

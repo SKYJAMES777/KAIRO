@@ -233,7 +233,7 @@ export default function BuilderHub({
             if (votes < 300) {
               return { step: 3, label: 'Milestone Met (目标达成)', desc: '社区势能符合条件，解锁首期资金', statusText: '里程碑达成' };
             }
-            return { step: 4, label: 'Paid (完成赏金汇出)', desc: '智能托管合约完成多签打款，圆满成功', statusText: '资助已到账' };
+            return { step: 4, label: 'Paid (完成赏金汇出)', desc: 'KAIRO 奖励记录已确认，圆满成功', statusText: '资助已到账' };
           };
 
           return (

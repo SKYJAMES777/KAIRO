@@ -33,8 +33,8 @@ export default function AdminPanel({
     const newValue = !cat.isEscrowed;
     onUpdateCatalyst(cat.id, { isEscrowed: newValue });
     addNotification(
-      '资金托管变更',
-      `成功将 $${cat.token.symbol} 奖池状态更新为 ${newValue ? '多签托管中 [Escrowed]' : '未托管'}`,
+      '奖励确认状态变更',
+      `成功将 $${cat.token.symbol} 奖励状态更新为 ${newValue ? '奖励已由 KAIRO 确认' : '奖励待确认'}`,
       'success'
     );
   };
@@ -112,7 +112,7 @@ export default function AdminPanel({
                   <span className="font-mono text-[9px] text-white/30">ID: {cat.id}</span>
                 </div>
 
-                {/* Verification & Escrow Toggles */}
+                {/* Verification & reward confirmation toggles */}
                 <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 pt-1">
                   {/* Verified Switch */}
                   <button
@@ -131,7 +131,7 @@ export default function AdminPanel({
                     )}
                   </button>
 
-                  {/* Escrowed Switch */}
+                  {/* Reward confirmed switch */}
                   <button
                     onClick={() => handleToggleEscrowed(cat)}
                     className={`flex items-center justify-between rounded-lg border px-3 py-2 text-xs font-semibold transition-all ${
@@ -140,7 +140,7 @@ export default function AdminPanel({
                         : 'bg-[#07090e] border-white/5 text-white/50 hover:border-white/10'
                     }`}
                   >
-                    <span>托管奖池 (Escrow)</span>
+                    <span>奖励确认</span>
                     {cat.isEscrowed ? (
                       <ToggleRight className="h-5 w-5 text-[#ffd285] flex-shrink-0 ml-1" />
                     ) : (

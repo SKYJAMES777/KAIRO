@@ -1,20 +1,58 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# KAIRO MVP
 
-# Run and deploy your AI Studio app
+KAIRO is a Web3 Catalyst and Boost platform for reviving dormant token ecosystems. The current implementation keeps the existing neon fintech preview experience while adding the scalable MVP structure:
 
-This contains everything you need to run your app locally.
+- `src/`: preserved visual mock experience and reusable UI components.
+- `client/`: React Router entrypoints and new product pages.
+- `shared/`: KAIRO domain types, Zod schemas, and mapping helpers.
+- `worker/`: Cloudflare Workers + Hono API, service layer, and D1 migrations.
+- `kairo_project_docs/`: product docs, static preview, and original schema reference.
 
-View your app in AI Studio: https://ai.studio/apps/a8a9b5dc-e92e-4705-b3aa-e2b2d7fdcbfd
+## Local Development
 
-## Run Locally
+```bash
+npm install
+npm run dev
+```
 
-**Prerequisites:**  Node.js
+Vite starts on port `3000` by default and will pick the next open port if needed.
 
+Useful routes:
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- `/`: KAIRO arena dashboard
+- `/catalysts`: Catalyst list
+- `/catalysts/cat-1`: Catalyst detail deep link
+- `/leaderboard`: Leaderboard
+- `/builder`: Builder terminal
+- `/proof`: Proof of Support
+- `/admin`: Admin-oriented Catalyst workspace
+
+## Worker And D1
+
+Run the Cloudflare Worker locally:
+
+```bash
+npm run dev:worker
+```
+
+Apply local D1 migrations:
+
+```bash
+npm run db:migrate:local
+```
+
+Deploy after replacing the placeholder D1/KV IDs in `wrangler.toml`:
+
+```bash
+npm run db:migrate:remote
+npm run deploy:worker
+```
+
+## Verification
+
+```bash
+npm run lint
+npm run build
+```
+
+Frontend copy must display `Reward confirmed by KAIRO` / `奖励已由 KAIRO 确认` instead of escrow or custody language.

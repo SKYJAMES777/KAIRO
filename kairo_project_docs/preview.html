@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KAIRO — The moment sleeping tokens rise again</title>
+  <style>
+    :root {
+      --bg: #07070A;
+      --panel: rgba(255,255,255,0.055);
+      --panel-2: rgba(255,255,255,0.09);
+      --text: #F8FAFC;
+      --muted: #A8B3C7;
+      --violet: #7C3AED;
+      --gold: #F59E0B;
+      --blue: #38BDF8;
+      --red: #EF4444;
+      --green: #22C55E;
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 22px 90px rgba(124, 58, 237, 0.25);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 12%, rgba(124, 58, 237, .42), transparent 33%),
+        radial-gradient(circle at 78% 8%, rgba(245, 158, 11, .24), transparent 28%),
+        radial-gradient(circle at 50% 55%, rgba(56, 189, 248, .08), transparent 26%),
+        #07070A;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .07;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+      mix-blend-mode: screen;
+    }
+    .container { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(7,7,10,.72);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: .18em; }
+    .logo {
+      width: 36px; height: 36px; border-radius: 12px;
+      background: conic-gradient(from 210deg, var(--violet), var(--blue), var(--gold), var(--violet));
+      box-shadow: 0 0 30px rgba(245,158,11,.38);
+      position: relative;
+    }
+    .logo:after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 9px;
+      background: #07070A;
+      box-shadow: inset 0 0 18px rgba(255,255,255,.12);
+    }
+    .links { display: flex; gap: 22px; align-items: center; color: var(--muted); font-size: 14px; }
+    .links a:hover { color: var(--text); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 13px 20px;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight: 700;
+      transition: .2s ease;
+      cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-2px); background: rgba(255,255,255,.1); }
+    .btn-primary {
+      border-color: rgba(245,158,11,.5);
+      background: linear-gradient(135deg, var(--violet), var(--gold));
+      box-shadow: 0 14px 45px rgba(245,158,11,.18);
+    }
+    .hero {
+      min-height: 760px;
+      display: grid;
+      align-items: center;
+      padding: 78px 0 54px;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #FDE68A;
+      background: rgba(245,158,11,.12);
+      border: 1px solid rgba(245,158,11,.28);
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .pulse {
+      width: 8px; height: 8px; background: var(--gold); border-radius: 50%;
+      box-shadow: 0 0 0 8px rgba(245,158,11,.16);
+    }
+    h1 {
+      font-size: clamp(54px, 9vw, 116px);
+      line-height: .88;
+      margin: 0 0 22px;
+      letter-spacing: -0.08em;
+    }
+    .gradient-text {
+      background: linear-gradient(100deg, #fff 10%, #C4B5FD 34%, #FCD34D 75%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      font-size: clamp(18px, 2.2vw, 24px);
+      line-height: 1.55;
+      color: var(--muted);
+      margin: 0 0 30px;
+      max-width: 700px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 12px;
+      margin-top: 34px;
+      max-width: 680px;
+    }
+    .stat {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.045);
+    }
+    .stat b { display: block; font-size: 24px; }
+    .stat span { display: block; color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .mock {
+      position: relative;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.04));
+      border-radius: 32px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .mock:before {
+      content: "";
+      position: absolute;
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(245,158,11,.18), transparent 60%);
+      top: -130px; right: -120px;
+    }
+    .window {
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: rgba(7,7,10,.78);
+      overflow: hidden;
+      position: relative;
+    }
+    .window-top {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+    .dot:nth-child(2){ background: var(--gold); }
+    .dot:nth-child(3){ background: var(--green); }
+    .cards { padding: 18px; display: grid; gap: 14px; }
+    .mini-card {
+      padding: 17px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+    .mini-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+    .ticker { font-weight: 900; font-size: 18px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      background: rgba(124,58,237,.2);
+      color: #DDD6FE;
+      border: 1px solid rgba(124,58,237,.35);
+      white-space: nowrap;
+    }
+    .badge.gold { background: rgba(245,158,11,.16); border-color: rgba(245,158,11,.35); color: #FDE68A; }
+    .badge.blue { background: rgba(56,189,248,.14); border-color: rgba(56,189,248,.3); color: #BAE6FD; }
+    .mini-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .bar {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      margin-top: 14px;
+      overflow: hidden;
+    }
+    .fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--violet), var(--gold)); }
+    section { padding: 74px 0; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
+    .section-head h2 { font-size: clamp(30px, 5vw, 54px); line-height: 1; margin: 0; letter-spacing: -0.06em; }
+    .section-head p { color: var(--muted); max-width: 520px; line-height: 1.6; margin: 0; }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .panel {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      border-radius: 26px;
+      padding: 24px;
+      min-height: 230px;
+    }
+    .panel:hover { background: rgba(255,255,255,.07); }
+    .num {
+      display: inline-flex;
+      width: 42px; height: 42px;
+      align-items: center; justify-content: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(124,58,237,.35), rgba(245,158,11,.22));
+      font-weight: 900;
+      margin-bottom: 22px;
+    }
+    .panel h3 { margin: 0 0 10px; font-size: 22px; }
+    .panel p { color: var(--muted); line-height: 1.6; margin: 0; }
+    .leaderboard {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 16px;
+    }
+    .table {
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      overflow: hidden;
+      background: rgba(255,255,255,.045);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 70px 1.2fr .8fr .8fr;
+      gap: 14px;
+      align-items: center;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .row:last-child { border-bottom: 0; }
+    .rank { color: #FDE68A; font-weight: 900; }
+    .muted { color: var(--muted); }
+    .cards-stack { display: grid; gap: 16px; }
+    .big-card {
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(124,58,237,.14), rgba(255,255,255,.05));
+      padding: 24px;
+    }
+    .big-card h3 { margin: 0 0 12px; font-size: 26px; letter-spacing: -0.03em; }
+    .big-card p { color: var(--muted); line-height: 1.6; margin: 0 0 18px; }
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    .step {
+      min-height: 150px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      background: rgba(255,255,255,.045);
+      position: relative;
+      overflow: hidden;
+    }
+    .step:after {
+      content: "";
+      position: absolute;
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      right: -40px; bottom: -45px;
+      background: radial-gradient(circle, rgba(245,158,11,.22), transparent 65%);
+    }
+    .step b { display: block; margin-bottom: 8px; }
+    .step span { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .cta {
+      text-align: center;
+      border: 1px solid rgba(245,158,11,.26);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(245,158,11,.18), transparent 45%),
+        rgba(255,255,255,.045);
+      border-radius: 34px;
+      padding: 60px 24px;
+      margin: 40px 0 70px;
+    }
+    .cta h2 { margin: 0 0 16px; font-size: clamp(34px, 5vw, 62px); letter-spacing: -0.06em; }
+    .cta p { color: var(--muted); margin: 0 auto 28px; max-width: 720px; line-height: 1.6; }
+    footer {
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding: 30px 0 46px;
+      font-size: 14px;
+    }
+    @media (max-width: 920px) {
+      .hero-grid, .leaderboard { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .timeline { grid-template-columns: 1fr; }
+      .links { display: none; }
+      .stats { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 44px 1fr; }
+      .row .hide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <nav>
+    <div class="container nav-inner">
+      <a class="brand" href="#">
+        <span class="logo"></span>
+        <span>KAIRO</span>
+      </a>
+      <div class="links">
+        <a href="#how">How it works</a>
+        <a href="#catalysts">Catalysts</a>
+        <a href="#builders">Builders</a>
+        <a href="#roadmap">Roadmap</a>
+        <a class="btn" href="#launch">Launch a Catalyst</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow"><span class="pulse"></span> Crypto Comeback Launchpad</div>
+          <h1><span class="gradient-text">The moment sleeping tokens rise again.</span></h1>
+          <p>
+            KAIRO connects old tokens, AI builders, and community Boosts to create real products,
+            prove delivery, and turn dormant attention into new crypto economies.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#launch">Launch a Catalyst</a>
+            <a class="btn" href="#catalysts">Find Catalysts</a>
+          </div>
+          <div class="stats">
+            <div class="stat"><b>42</b><span>Seed Catalysts</span></div>
+            <div class="stat"><b>12.8k</b><span>Community Boosts</span></div>
+            <div class="stat"><b>860</b><span>Top KAIRO Score</span></div>
+          </div>
+        </div>
+
+        <div class="mock">
+          <div class="window">
+            <div class="window-top">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span style="margin-left:10px;">kairo.app / catalysts</span>
+            </div>
+            <div class="cards">
+              <div class="mini-card">
+                <div class="mini-head">
+                  <div>
+                    <div class="ticker">$EMBER AI Toolkit</div>
+                    <p>Build a community utility bot that gives this dormant token a daily use case.</p>
+                  </div>
+                  <span class="badge gold">Reward confirmed</span>
+                </div>
+                <div class="bar"><div class="fill" style="width: 82%"></div></div>
+              </div>
+              <div class="mini-card">
+                <div class="mini-head">
+                  <div>
+                    <div class="ticker">$ORBIT Mini Game</div>
+                    <p>A viral mini-game that makes holder identity and community quests playable.</p>
+                  </div>
+                  <span class="badge blue">1,284 Boosts</span>
+                </div>
+                <div class="bar"><div class="fill" style="width: 63%"></div></div>
+              </div>
+              <div class="mini-card">
+                <div class="mini-head">
+                  <div>
+                    <div class="ticker">Builder: Nova Labs</div>
+                    <p>KAIRO Score 860 · 2 completed Catalysts · 430 valid Boosts.</p>
+                  </div>
+                  <span class="badge">Genesis Candidate</span>
+                </div>
+                <div class="bar"><div class="fill" style="width: 91%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="how">
+      <div class="container">
+        <div class="section-head">
+          <h2>Old tokens. New builders. Real products.</h2>
+          <p>KAIRO is not a crowdfunding platform in MVP. It is a bounty and community signaling platform built for fast validation and viral distribution.</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <div class="num">01</div>
+            <h3>Launch a Catalyst</h3>
+            <p>Projects publish a clear comeback mission with token info, reward description, and public Funding Status.</p>
+          </div>
+          <div class="panel">
+            <div class="num">02</div>
+            <h3>Submit real demos</h3>
+            <p>AI Builders submit demo links, GitHub repos, videos, and concise plans for how they will bring the token back.</p>
+          </div>
+          <div class="panel">
+            <div class="num">03</div>
+            <h3>Boost momentum</h3>
+            <p>Supporters Boost Catalysts and Builders. Every valid Boost becomes part of Proof of Support.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalysts">
+      <div class="container">
+        <div class="section-head">
+          <h2>Hottest Catalysts</h2>
+          <p>Reward status, Momentum, and delivery signals help builders find real opportunities instead of empty promises.</p>
+        </div>
+        <div class="leaderboard">
+          <div class="table">
+            <div class="row">
+              <div class="rank">#1</div>
+              <div><b>$EMBER AI Agent</b><div class="muted">Confirmed Reward · 1,824 Boosts</div></div>
+              <div class="hide-sm"><span class="badge gold">Reward confirmed</span></div>
+              <div class="hide-sm muted">Momentum 92</div>
+            </div>
+            <div class="row">
+              <div class="rank">#2</div>
+              <div><b>$NOVA Quest App</b><div class="muted">Pledged Reward · 1,320 Boosts</div></div>
+              <div class="hide-sm"><span class="badge blue">Reward pledged</span></div>
+              <div class="hide-sm muted">Momentum 78</div>
+            </div>
+            <div class="row">
+              <div class="rank">#3</div>
+              <div><b>$ORBIT Holder Tool</b><div class="muted">Confirmed Reward · 986 Boosts</div></div>
+              <div class="hide-sm"><span class="badge gold">Reward confirmed</span></div>
+              <div class="hide-sm muted">Momentum 71</div>
+            </div>
+            <div class="row">
+              <div class="rank">#4</div>
+              <div><b>$KINDRA Mini Game</b><div class="muted">Reward not verified · 620 Boosts</div></div>
+              <div class="hide-sm"><span class="badge">Unverified</span></div>
+              <div class="hide-sm muted">Momentum 49</div>
+            </div>
+          </div>
+          <div class="cards-stack">
+            <div class="big-card">
+              <span class="badge gold">Dormant Giants</span>
+              <h3>Claim your token’s KAIRO moment.</h3>
+              <p>Curated seed lists help dormant communities discover a comeback path before the platform has full organic liquidity.</p>
+              <a class="btn" href="#">View Dormant Giants</a>
+            </div>
+            <div class="big-card">
+              <span class="badge blue">Proof of Support</span>
+              <h3>Support history is not a points balance.</h3>
+              <p>Every Boost writes an event trail that can later support badges, allowlists, snapshots, or optional rewards.</p>
+              <a class="btn" href="#">View Proof</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="builders">
+      <div class="container">
+        <div class="section-head">
+          <h2>KAIRO Score rewards delivery.</h2>
+          <p>Boosts create momentum, but completed work drives reputation. Builder rankings are delivery-weighted by design.</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <div class="num">+400</div>
+            <h3>Completed delivery</h3>
+            <p>Completed Catalysts carry the largest weight, keeping the leaderboard from becoming a pure popularity contest.</p>
+          </div>
+          <div class="panel">
+            <div class="num">+200</div>
+            <h3>Confirmed reward delivery</h3>
+            <p>Builders who complete confirmed reward projects get stronger credibility signals for future Genesis stages.</p>
+          </div>
+          <div class="panel">
+            <div class="num">+1</div>
+            <h3>Valid Boost</h3>
+            <p>Boosts matter, but they serve as community signal rather than the only ranking factor.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="container">
+        <div class="section-head">
+          <h2>Roadmap</h2>
+          <p>Start lightweight. Prove demand. Add chain trust only after real usage exists.</p>
+        </div>
+        <div class="timeline">
+          <div class="step"><b>Phase 0</b><span>Cloudflare MVP: Catalyst, Boost, Momentum, Funding Status, Proof of Support.</span></div>
+          <div class="step"><b>Phase 1</b><span>Light on-chain proof: wallet binding, snapshots, Builder Badge / SBT.</span></div>
+          <div class="step"><b>Phase 2</b><span>Base USDC Escrow replaces manual confirmation for serious bounty flow.</span></div>
+          <div class="step"><b>Phase 3</b><span>Legacy Airdrop tools powered by Proof of Support history.</span></div>
+          <div class="step"><b>Phase 4</b><span>Genesis Launchpad, TokenFactory, Bonding Curve, optional platform token.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="launch">
+      <div class="container">
+        <div class="cta">
+          <h2>Ready to create the next crypto comeback story?</h2>
+          <p>Launch a Catalyst, invite AI Builders, and let your community Boost the momentum. MVP first. Real products first. Chain finance later.</p>
+          <div class="hero-actions" style="justify-content:center;">
+            <a class="btn btn-primary" href="#">Launch a Catalyst</a>
+            <a class="btn" href="#">Explore Builders</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <b>KAIRO</b> — A bounty and community signaling platform. Boosting a Catalyst does not represent an investment, purchase, or guaranteed financial return.
+    </div>
+  </footer>
+</body>
+</html>

@@ -15,6 +15,12 @@ import BuilderHub from './components/BuilderHub';
 import Leaderboard from './components/Leaderboard';
 import AdminPanel from './components/AdminPanel';
 
+interface AppProps {
+  initialTab?: string;
+  initialCatalystId?: string | null;
+  onRouteBack?: () => void;
+}
+
 interface ToastNotification {
   id: string;
   title: string;
@@ -70,10 +76,10 @@ const INITIAL_SWAP_HISTORY: SwapTx[] = [
   }
 ];
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('arena');
+export default function App({ initialTab = 'arena', initialCatalystId = null, onRouteBack }: AppProps) {
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [roleMode, setRoleMode] = useState<'investor' | 'developer'>('investor');
-  const [selectedCatalystId, setSelectedCatalystId] = useState<string | null>(null);
+  const [selectedCatalystId, setSelectedCatalystId] = useState<string | null>(initialCatalystId);
   const [catalysts, setCatalysts] = useState<Catalyst[]>(INITIAL_CATALYSTS);
   const [bids, setBids] = useState<Bid[]>(INITIAL_BIDS);
   const [userState, setUserState] = useState<UserState>(INITIAL_USER);
@@ -574,7 +580,10 @@ export default function App() {
               <CatalystDetails
                 catalyst={selectedCatalyst}
                 bids={bids}
-                onBack={() => setSelectedCatalystId(null)}
+                onBack={() => {
+                  setSelectedCatalystId(null);
+                  onRouteBack?.();
+                }}
                 userState={userState}
                 onSubmitBid={handleSubmitBid}
                 onBoostBid={handleBoostBid}

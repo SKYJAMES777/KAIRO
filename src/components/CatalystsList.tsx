@@ -209,10 +209,10 @@ export default function CatalystsList({
                         {cat.isEscrowed && (
                           <span 
                             className="flex items-center space-x-0.5 rounded bg-amber-500/10 px-2 py-0.5 text-[9px] font-black text-amber-400 border border-amber-500/10"
-                            title="奖池资产已托管"
+                            title="奖励已由 KAIRO 确认"
                           >
                             <Lock className="h-2.5 w-2.5 inline" />
-                            <span>ESCROWED</span>
+                            <span>CONFIRMED</span>
                           </span>
                         )}
                       </div>

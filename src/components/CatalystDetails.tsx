@@ -271,7 +271,7 @@ export default function CatalystDetails({
                   </span>
                 </div>
                 
-                {/* Verified / Escrowed Badges */}
+                {/* Verified / reward confirmation badges */}
                 <div className="flex flex-wrap gap-1.5 mt-1">
                   {catalyst.isVerified && (
                     <span className="flex items-center space-x-1 rounded bg-green-500/10 px-2 py-0.5 text-[9px] font-black text-green-400 border border-green-500/10">
@@ -282,7 +282,7 @@ export default function CatalystDetails({
                   {catalyst.isEscrowed && (
                     <span className="flex items-center space-x-1 rounded bg-amber-500/10 px-2 py-0.5 text-[9px] font-black text-amber-400 border border-amber-500/10">
                       <Lock className="h-2.5 w-2.5" />
-                      <span>ESCROWED POOL</span>
+                      <span>REWARD CONFIRMED BY KAIRO</span>
                     </span>
                   )}
                 </div>

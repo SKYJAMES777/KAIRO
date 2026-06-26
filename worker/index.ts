@@ -5,6 +5,7 @@ import { createBoost } from './services/boosts';
 import { createBounty, getBounty, listBounties } from './services/bounties';
 import { getLeaderboard } from './services/leaderboard';
 import { createSubmission, listSubmissions } from './services/submissions';
+import { getProofOfSupport, getSupportEvents, getSupportPoints, resolveCurrentSupportUser } from './services/support';
 import type { Env } from './db/d1';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -40,6 +41,21 @@ app.post('/api/submissions', async (c) =>
 app.post('/api/boosts', async (c) => c.json({ data: await createBoost(c.env, await c.req.json()) }, 201));
 
 app.get('/api/leaderboard', async (c) => c.json({ data: await getLeaderboard(c.env) }));
+
+app.get('/api/support/points/me', async (c) => {
+  const user = resolveCurrentSupportUser(c.req.raw.headers);
+  return c.json({ data: await getSupportPoints(c.env, user.id), user });
+});
+
+app.get('/api/support/events/me', async (c) => {
+  const user = resolveCurrentSupportUser(c.req.raw.headers);
+  return c.json({ data: await getSupportEvents(c.env, user.id), user });
+});
+
+app.get('/api/support/proof/me', async (c) => {
+  const user = resolveCurrentSupportUser(c.req.raw.headers);
+  return c.json({ data: await getProofOfSupport(c.env, user) });
+});
 
 app.onError((error, c) => {
   if (error instanceof z.ZodError) {
